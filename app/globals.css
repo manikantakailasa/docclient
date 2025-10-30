@@ -1,26 +1,194 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Modern clinical color palette with purple primary, teal accent, amber alerts */
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 45% 15%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(210 45% 15%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 45% 15%);
+
+  /* Primary: Deep purple for brand and AI features */
+  --primary: hsl(205 56% 23%);
+  --primary-foreground: hsl(0 0% 100%);
+
+  /* Secondary: Teal for clinical actions */
+  --secondary: hsl(205 66% 36%);
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --muted: hsl(210 20% 94%);
+  --muted-foreground: hsl(210 15% 45%);
+
+  /* Accent: Teal variant */
+  --accent: hsl(176 48% 46%);
+  --accent-foreground: hsl(0 0% 100%);
+
+  /* Destructive: Keep for errors */
+  --destructive: hsl(9 81% 57%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* Alert: Amber for reminders */
+  --alert: hsl(48 90% 66%);
+  --alert-foreground: hsl(210 45% 15%);
+
+  /* Success: Emerald */
+  --success: hsl(176 48% 46%);
+  --success-foreground: hsl(0 0% 100%);
+
+  /* Action colors for standardized button colors */
+  --action-delete: hsl(9 81% 57%);
+  --action-delete-foreground: hsl(0 0% 100%);
+  --action-edit: hsl(48 90% 66%);
+  --action-edit-foreground: hsl(210 45% 15%);
+  --action-save: hsl(176 48% 46%);
+  --action-save-foreground: hsl(0 0% 100%);
+  --action-add: hsl(205 66% 36%);
+  --action-add-foreground: hsl(0 0% 100%);
+
+  --border: hsl(210 20% 88%);
+  --input: hsl(210 20% 88%);
+  --ring: hsl(205 56% 23%);
+
+  --chart-1: hsl(205 56% 23%);
+  --chart-2: hsl(205 66% 36%);
+  --chart-3: hsl(176 48% 46%);
+  --chart-4: hsl(48 90% 66%);
+  --chart-5: hsl(9 81% 57%);
+
+  --radius: 0.75rem;
+
+  --sidebar: hsl(210 20% 97%);
+  --sidebar-foreground: hsl(210 45% 15%);
+  --sidebar-primary: hsl(205 56% 23%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(210 20% 94%);
+  --sidebar-accent-foreground: hsl(210 45% 15%);
+  --sidebar-border: hsl(210 20% 88%);
+  --sidebar-ring: hsl(205 56% 23%);
+}
+
+.dark {
+  --background: hsl(210 45% 8%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(210 45% 12%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(210 45% 12%);
+  --popover-foreground: hsl(0 0% 98%);
+
+  --primary: hsl(205 56% 35%);
+  --primary-foreground: hsl(0 0% 100%);
+
+  --secondary: hsl(205 66% 48%);
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --muted: hsl(210 20% 20%);
+  --muted-foreground: hsl(210 15% 65%);
+
+  --accent: hsl(176 48% 55%);
+  --accent-foreground: hsl(210 45% 8%);
+
+  --destructive: hsl(9 75% 62%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --alert: hsl(48 85% 70%);
+  --alert-foreground: hsl(210 45% 8%);
+
+  --success: hsl(176 48% 55%);
+  --success-foreground: hsl(210 45% 8%);
+
+  /* Dark mode action colors */
+  --action-delete: hsl(9 75% 62%);
+  --action-delete-foreground: hsl(0 0% 100%);
+  --action-edit: hsl(48 85% 70%);
+  --action-edit-foreground: hsl(210 45% 8%);
+  --action-save: hsl(176 48% 55%);
+  --action-save-foreground: hsl(210 45% 8%);
+  --action-add: hsl(205 66% 48%);
+  --action-add-foreground: hsl(0 0% 100%);
+
+  --border: hsl(210 20% 25%);
+  --input: hsl(210 20% 25%);
+  --ring: hsl(205 56% 35%);
+
+  --chart-1: hsl(205 56% 45%);
+  --chart-2: hsl(205 66% 55%);
+  --chart-3: hsl(176 48% 60%);
+  --chart-4: hsl(48 85% 72%);
+  --chart-5: hsl(9 75% 65%);
+
+  --sidebar: hsl(210 45% 12%);
+  --sidebar-foreground: hsl(0 0% 98%);
+  --sidebar-primary: hsl(205 56% 35%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(210 20% 20%);
+  --sidebar-accent-foreground: hsl(0 0% 98%);
+  --sidebar-border: hsl(210 20% 25%);
+  --sidebar-ring: hsl(205 56% 35%);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-alert: var(--alert);
+  --color-alert-foreground: var(--alert-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  /* Expose action colors to Tailwind */
+  --color-action-delete: var(--action-delete);
+  --color-action-delete-foreground: var(--action-delete-foreground);
+  --color-action-edit: var(--action-edit);
+  --color-action-edit-foreground: var(--action-edit-foreground);
+  --color-action-save: var(--action-save);
+  --color-action-save-foreground: var(--action-save-foreground);
+  --color-action-add: var(--action-add);
+  --color-action-add-foreground: var(--action-add-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
 }
