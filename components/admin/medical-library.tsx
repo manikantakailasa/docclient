@@ -12,7 +12,7 @@ import { useState } from "react"
 
 type Medicine = {
   id?: string
-  name: string
+  name?: string
   category?: string
   dosageForms?: string[]
   commonStrengths?: string[]
@@ -110,7 +110,7 @@ export default function MedicalLibrary() {
   const [medicineDialogOpen, setMedicineDialogOpen] = useState(false)
   const [testDialogOpen, setTestDialogOpen] = useState(false)
 
-  const filteredMedicines = medicines.filter((m) => m.name.toLowerCase().includes(medicineSearch.toLowerCase()))
+  const filteredMedicines = medicines.filter((m) => (m.name ?? "").toLowerCase().includes(medicineSearch.toLowerCase()))
   const filteredTests = tests.filter((t) => t.name.toLowerCase().includes(testSearch.toLowerCase()))
 
   const toggleFavoriteMedicine = (id: string) => {
@@ -139,11 +139,38 @@ export default function MedicalLibrary() {
     setTestDialogOpen(true)
   }
 
-  const saveMedicine = () => {
-    console.log("[v0] Save medicine:", editingMedicine)
-    setMedicineDialogOpen(false)
-    // setEditingMedicine({ ...editingMedicine })
-  }
+const saveMedicine = async () => {
+	if (!editingMedicine?.name) {
+		console.error("Medicine name is required")
+		return
+	}
+
+	try {
+		const res = await fetch("/api/medicines", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(editingMedicine),
+		})
+
+		if (!res.ok) throw new Error("Failed to save medicine")
+
+		const saved = await res.json()
+
+		// Update UI state immediately
+		setMedicines((prev) => {
+			const exists = prev.some((m) => m.id === saved.id)
+			if (exists) {
+				return prev.map((m) => (m.id === saved.id ? saved : m))
+			}
+			return [...prev, saved]
+		})
+
+		setEditingMedicine(null)
+		setMedicineDialogOpen(false)
+	} catch (err) {
+		console.error("Error saving medicine:", err)
+	}
+}
 
   const saveTest = () => {
     console.log("[v0] Save test:", editingTest)
@@ -196,28 +223,65 @@ export default function MedicalLibrary() {
                       <div>
                         <label className="text-sm font-medium">Category</label>
                         <Input placeholder="e.g., Antibiotic"
-                          className="mt-1" />
+                           onChange={(e) => setEditingMedicine({ ...editingMedicine, category: e.target.value })} className="mt-1" />
                       </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium">Dosage Forms (comma-separated)</label>
-                      <Input placeholder="e.g., Capsule, Suspension" className="mt-1" />
+                      <Input placeholder="e.g., Capsule, Suspension"
+                       onChange={(e) =>
+                          setEditingMedicine((prev) => ({
+                            ...(prev ?? { id: crypto.randomUUID(), name: "" }),
+                            dosageForms: e.target.value
+                              .split(",")
+                              .map((item) => item.trim())
+                              .filter(Boolean), // removes empty entries
+                          }))
+                        }  className="mt-1" />
                     </div>
                     <div>
                       <label className="text-sm font-medium">Common Strengths (comma-separated)</label>
-                      <Input placeholder="e.g., 250mg, 500mg" className="mt-1" />
+                      <Input placeholder="e.g., 250mg, 500mg"
+                       onChange={(e) =>
+                          setEditingMedicine((prev) => ({
+                            ...(prev ?? { id: crypto.randomUUID(), name: "" }),
+                            commonStrengths: e.target.value
+                              .split(",")
+                              .map((item) => item.trim())
+                              .filter(Boolean), // removes empty entries
+                          }))
+                        }  className="mt-1" />
                     </div>
                     <div>
                       <label className="text-sm font-medium">Common Frequencies (comma-separated)</label>
-                      <Input placeholder="e.g., TID, BID, OD" className="mt-1" />
+                      <Input placeholder="e.g., TID, BID, OD"
+                       onChange={(e) =>
+                          setEditingMedicine((prev) => ({
+                            ...(prev ?? { id: crypto.randomUUID(), name: "" }),
+                            commonFrequencies: e.target.value
+                              .split(",")
+                              .map((item) => item.trim())
+                              .filter(Boolean), // removes empty entries
+                          }))
+                        }  className="mt-1" />
                     </div>
                     <div>
                       <label className="text-sm font-medium">Instructions</label>
-                      <Textarea placeholder="e.g., Take with food" className="mt-1" />
+                      <Textarea placeholder="e.g., Take with food"
+                       onChange={(e) => setEditingMedicine({ ...editingMedicine, instructions: e.target.value })}  className="mt-1" />
                     </div>
                     <div>
                       <label className="text-sm font-medium">Specialties (comma-separated)</label>
-                      <Input placeholder="e.g., Cardiology, General" className="mt-1" />
+                      <Input placeholder="e.g., Cardiology, General"
+                       onChange={(e) =>
+                          setEditingMedicine((prev) => ({
+                            ...(prev ?? { id: crypto.randomUUID(), name: "" }),
+                            specialties: e.target.value
+                              .split(",")
+                              .map((item) => item.trim())
+                              .filter(Boolean), // removes empty entries
+                          }))
+                        }  className="mt-1" />
                     </div>
                     <div className="flex items-center justify-end gap-2">
                       <Button variant="outline" onClick={() => setMedicineDialogOpen(false)}>

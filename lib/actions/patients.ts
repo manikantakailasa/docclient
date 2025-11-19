@@ -40,7 +40,6 @@ export async function createPatient(formData: {
   gender: string
   phone: string
   email: string
-  address: string
   bloodGroup?: string
   allergies?: string
   conditions?: string
@@ -56,7 +55,6 @@ export async function createPatient(formData: {
       gender: formData.gender || null,
       phone: formData.phone || null,
       email: formData.email || null,
-      address: formData.address || null,
       blood_group: formData.bloodGroup || null,
       allergies: formData.allergies || null,
       conditions: formData.conditions || null,

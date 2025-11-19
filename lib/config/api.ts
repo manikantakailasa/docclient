@@ -12,7 +12,7 @@ export const API_ENDPOINTS = {
   patients: {
     list: "/patients",
     search: "/patients/search",
-    create: "/patients",
+    create: "/api/patients",
     getById: (id: string) => `/patients/${id}`,
     update: (id: string) => `/patients/${id}`,
     delete: (id: string) => `/patients/${id}`,

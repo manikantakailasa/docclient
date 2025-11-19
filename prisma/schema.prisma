@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Medicine {
+  id                 String   @id @default(uuid())
+  name               String
+  category           String
+  dosageForms        String[] @default([])      // string[]
+  commonStrengths    String[] @default([])      // string[]
+  commonFrequencies  String[] @default([])      // string[]
+  instructions       String?                    // string | null
+  specialties        String[] @default([])      // string[]
+  usageCount         Int      @default(0)
+  isFavorite         Boolean  @default(false)
+
+  @@map("medical_library")
+}
+
+model Patients {
+  id           String   @id @default(uuid())
+  full_name    String
+  age          Int?
+  gender       String
+  phone        String
+  email        String?
+  blood_group  BloodGroup?
+  patient_type String
+
+  @@map("patients")
+}
+
+enum BloodGroup {
+  A_pos    @map("A+")
+  A_neg    @map("A-")
+  B_pos    @map("B+")
+  B_neg    @map("B-")
+  AB_pos   @map("AB+")
+  AB_neg   @map("AB-")
+  O_pos    @map("O+")
+  O_neg    @map("O-")
+}

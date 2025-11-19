@@ -1,13 +1,12 @@
 "use client"
 
-import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { searchPatients } from "@/lib/actions/patients"
 import { Plus, Search } from "lucide-react"
-import { createPatient, searchPatients } from "@/lib/actions/patients"
-import { createAppointmentWithVitals } from "@/lib/actions/appointments"
+import * as React from "react"
 
 export default function AddPatientButton() {
   const [open, setOpen] = React.useState(false)
@@ -92,35 +91,39 @@ export default function AddPatientButton() {
       let patientId = selectedPatient?.id
 
       if (patientType === "new") {
-        const result = await createPatient({
-          fullName,
-          age,
-          gender,
-          phone,
-          email,
-          address,
-          bloodGroup,
-          allergies,
-          conditions,
-        })
-        patientId = result.data?.id
+        const result = await fetch("/api/patients", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+              full_name: fullName,
+              age: age ? Number.parseInt(age) : null,
+              gender: gender || null,
+              phone: phone || null,
+              email: email || null,
+              blood_group: bloodGroup || null,
+              patient_type: patientType,
+            }),
+            })
+
+       
+        // patientId = result.data?.id
       }
 
-      if (!patientId) {
-        throw new Error("Patient ID not found")
-      }
+      // if (!patientId) {
+      //   throw new Error("Patient ID not found")
+      // }
 
-      const appointmentData = {
-        patientId,
-        visitType,
-        appointmentDate: visitType === "schedule" ? appointmentDate : undefined,
-        appointmentTime: visitType === "schedule" ? appointmentTime : undefined,
-        chiefComplaint: "", // Empty for now, will be added later
-        vitals: {}, // Empty vitals, will be added later
-        status: visitType === "walkin" ? "waiting" : "scheduled", // Set status to "waiting" for walk-in, "scheduled" for appointments
-      }
+      // const appointmentData = {
+      //   patientId,
+      //   visitType,
+      //   appointmentDate: visitType === "schedule" ? appointmentDate : undefined,
+      //   appointmentTime: visitType === "schedule" ? appointmentTime : undefined,
+      //   chiefComplaint: "", // Empty for now, will be added later
+      //   vitals: {}, // Empty vitals, will be added later
+      //   status: visitType === "walkin" ? "waiting" : "scheduled", // Set status to "waiting" for walk-in, "scheduled" for appointments
+      // }
 
-      await createAppointmentWithVitals(appointmentData)
+      // await createAppointmentWithVitals(appointmentData)
 
       resetForm()
       setOpen(false)
@@ -305,14 +308,14 @@ export default function AddPatientButton() {
                     disabled={patientType === "followup" && !!selectedPatient}
                   >
                     <option value="">Select</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
+                    <option value="A_pos">A+</option>
+                    <option value="A_neg">A-</option>
+                    <option value="B_pos">B+</option>
+                    <option value="B_neg">B-</option>
+                    <option value="AB_pos">AB+</option>
+                    <option value="AB_neg">AB-</option>
+                    <option value="O_pos">O+</option>
+                    <option value="O_neg">O-</option>
                   </select>
                 </div>
               </div>
