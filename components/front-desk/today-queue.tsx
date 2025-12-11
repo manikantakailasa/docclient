@@ -28,9 +28,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { checkInPatient } from "@/lib/actions/appointments"
 import { createVitals } from "@/lib/actions/vitals"
 import { cn } from "@/lib/utils"
+import { removeAppointment, updateAppointment } from "@/store/slices/appointmentSlice"
 import { Activity, Bell, CalendarClock, CreditCard, Info, MessageSquare, Trash2, UserCheck } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
+import { useDispatch } from "react-redux"
 
 type Appointment = {
   id: number | string
@@ -60,6 +62,7 @@ const statusColor: Record<string, string> = {
 }
 
 export default function TodayQueue({ appointments, className, onRemove }: TodayQueueProps) {
+  const dispatch =  useDispatch();
   const [query, setQuery] = React.useState("")
   const [selected, setSelected] = React.useState<Appointment | null>(null)
 
@@ -124,7 +127,8 @@ export default function TodayQueue({ appointments, className, onRemove }: TodayQ
 
   const handleCheckIn = async (id: string | number) => {
     try {
-      await checkInPatient(String(id))
+      dispatch(updateAppointment({id,status:"checked-in"}));
+      await checkInPatient(JSON.stringify({id,status:"checked-in"}))
       setPatientStatus((prev) => ({ ...prev, [id]: "checked-in" }))
     } catch (error) {
       console.error("[v0] Error checking in patient:", error)
@@ -198,7 +202,9 @@ export default function TodayQueue({ appointments, className, onRemove }: TodayQ
   }
 
   const confirmRemove = () => {
+
     if (patientToDelete !== null) {
+      dispatch(removeAppointment(patientToDelete));
       onRemove?.(patientToDelete)
       setPatientToDelete(null)
     }

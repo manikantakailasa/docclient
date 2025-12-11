@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ClinicHeader } from "@/components/clinic-header"
 import { Suspense } from "react"
+import { ReduxProvider } from "@/store/provider"
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -20,6 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <ReduxProvider>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>
           <ClinicHeader />
@@ -27,6 +29,7 @@ export default function RootLayout({
         </Suspense>
         <Analytics />
       </body>
+      </ReduxProvider>
     </html>
   )
 }

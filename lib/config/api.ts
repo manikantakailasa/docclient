@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
 
   // Appointment endpoints
   appointments: {
+    all: "/api/appointments",
     today: "/appointments/today",
     upcoming: "/appointments/upcoming",
     completed: "/appointments/completed",

@@ -1,14 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { searchPatients } from "@/lib/actions/patients"
-import { Plus, Search } from "lucide-react"
-import * as React from "react"
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { searchPatients } from "@/lib/actions/patients";
+import { addAppointments } from "@/store/slices/appointmentSlice";
+import { Plus, Search } from "lucide-react";
+import * as React from "react";
+import { useDispatch } from "react-redux";
 
 export default function AddPatientButton() {
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -89,7 +92,6 @@ export default function AddPatientButton() {
 
     try {
       let patientId = selectedPatient?.id
-
       if (patientType === "new") {
         const result = await fetch("/api/patients", {
               method: "POST",
@@ -104,26 +106,35 @@ export default function AddPatientButton() {
               patient_type: patientType,
             }),
             })
-
+         const data = await result.json(); 
        
-        // patientId = result.data?.id
+        patientId = data?.id
       }
 
-      // if (!patientId) {
-      //   throw new Error("Patient ID not found")
-      // }
+      if (!patientId) {
+        throw new Error("Patient ID not found")
+      }
+      const [h, m] = appointmentTime.split(":");
 
-      // const appointmentData = {
-      //   patientId,
-      //   visitType,
-      //   appointmentDate: visitType === "schedule" ? appointmentDate : undefined,
-      //   appointmentTime: visitType === "schedule" ? appointmentTime : undefined,
-      //   chiefComplaint: "", // Empty for now, will be added later
-      //   vitals: {}, // Empty vitals, will be added later
-      //   status: visitType === "walkin" ? "waiting" : "scheduled", // Set status to "waiting" for walk-in, "scheduled" for appointments
-      // }
+      const d = new Date(appointmentDate);
+      d.setHours(Number(h));
+      d.setMinutes(Number(m));
+      d.setSeconds(0);
+      const appointmentData = {
+        patient_id:patientId,
+        visitType,
+        appointment_date: visitType === "schedule" ? d : undefined,
+        chiefComplaint: "", // Empty for now, will be added later
+        vitals: {}, // Empty vitals, will be added later
+        status: visitType === "walkin" ? "waiting" : "scheduled", // Set status to "waiting" for walk-in, "scheduled" for appointments
+      }
 
-      // await createAppointmentWithVitals(appointmentData)
+      const res  =await fetch("/api/appointments", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(appointmentData),
+      })
+      dispatch(addAppointments(await res.json()));
 
       resetForm()
       setOpen(false)
@@ -339,7 +350,7 @@ export default function AddPatientButton() {
                     id="appt-time"
                     type="time"
                     value={appointmentTime}
-                    onChange={(e) => setAppointmentTime(e.target.value)}
+                    onChange={(e) => setAppointmentTime(e.target.value) }
                     required
                   />
                 </div>

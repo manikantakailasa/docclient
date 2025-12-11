@@ -32,8 +32,30 @@ model Patients {
   blood_group  BloodGroup?
   patient_type String
 
+  appointments Appointments[]
+
   @@map("patients")
 }
+
+model Appointments {
+  id                       String   @id @default(uuid())
+  patient_id               String
+  appointment_date         DateTime
+  status                   String   @default("scheduled")
+  visit_type               String?
+  chief_complaint          String?
+  notes                    String?
+  checked_in_at            DateTime?
+  consultation_started_at  DateTime?
+  consultation_ended_at    DateTime?
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  patient                  Patients    @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+   @@map("appointments")
+}
+
 
 enum BloodGroup {
   A_pos    @map("A+")

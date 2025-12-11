@@ -18,16 +18,25 @@ export interface Appointment {
 }
 
 export async function getTodayAppointments() {
-  const { data, error } = await apiRequest<Appointment[]>(API_ENDPOINTS.appointments.today, {
-    method: "GET",
-  })
+  try {
+    const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL +"/api/appointments", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  if (error) {
-    console.error("[v0] Error fetching appointments:", error)
-    return { data: [], error }
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const data: Appointment[] = await res.json();
+    return { data, error: null };
   }
-
-  return { data: data || [], error: null }
+  catch (error) {
+    console.error("[v0] Error fetching today's appointments:", error);
+    return { data: [], error: error instanceof Error ? error.message : "Unknown error" };
+  }
 }
 
 export async function updateAppointmentStatus(id: string, status: string) {
@@ -47,20 +56,26 @@ export async function updateAppointmentStatus(id: string, status: string) {
   return { data, error: null }
 }
 
-export async function checkInPatient(appointmentId: string) {
-  const { data, error } = await apiRequest<Appointment>(API_ENDPOINTS.appointments.checkIn(appointmentId), {
-    method: "POST",
-  })
+export async function checkInPatient(appointmentdata: string) {
+  const id = JSON.parse(appointmentdata).id;
+  const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL +`/api/appointments?id=${id}` , {
+    method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      status: JSON.parse(appointmentdata).status,
+      }),
+    });
 
-  if (error) {
-    console.error("[v0] Error checking in patient:", error)
-    throw new Error(error)
-  }
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
 
   revalidatePath("/front-desk")
   revalidatePath("/doctor")
 
-  return { data, error: null }
+  return { error: null }
 }
 
 export async function createAppointmentWithVitals(data: {
@@ -149,17 +164,17 @@ export async function cancelAppointment(id: string) {
 }
 
 export async function deleteAppointment(id: string) {
-  const { error } = await apiRequest(API_ENDPOINTS.appointments.delete(id), {
+  const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`/api/appointments?id=${id}`, {
     method: "DELETE",
   })
 
-  if (error) {
-    console.error("[v0] Error deleting appointment:", error)
-    throw new Error(error)
+  if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
   }
-
   revalidatePath("/front-desk")
   revalidatePath("/doctor")
 
-  return { error: null }
+  const data: Appointment[] = await res.json();
+  return { data, error: null };
+
 }

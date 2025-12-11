@@ -1,4 +1,5 @@
 import AddPatientButton from "@/components/front-desk/add-patient-button"
+import Appointments from "@/components/front-desk/appointments"
 import TodayQueue from "@/components/front-desk/today-queue"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -82,7 +83,7 @@ const FrontDeskPage = async () => {
             </div>
           </div>
           <div className="p-4 pt-2">
-            <TodayQueue appointments={todayQueue} onRemove={handleRemoveAppointment as (id: string | number) => any } />
+            <Appointments appointments={todayQueue} onRemove={handleRemoveAppointment as (id: string | number) => any } />
           </div>
         </Card>
 
@@ -129,7 +130,7 @@ const FrontDeskPage = async () => {
             <AddPatientButton />
           </div>
           <div className="p-4 pt-2">
-            <TodayQueue appointments={todayQueue} onRemove={handleRemoveAppointment as (id: string | number) => any } />
+            <Appointments appointments={todayQueue} onRemove={handleRemoveAppointment as (id: string | number) => any } />
           </div>
         </Card>
 
